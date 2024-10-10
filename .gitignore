@@ -1,0 +1,21 @@
+/node_modules
+/public/hot
+/public/storage
+/storage/*.key
+# Ignore all directories within vendor/
+vendor/*
+/config/aws.php
+# Except the vendor/laravel/sail/runtimes directory
+!vendor/laravel
+!vendor/bin
+.env
+.env.backup
+.phpunit.result.cache
+docker-compose.override.yml
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+/.idea
+/.vscode
+/zunger-57798-firebase-adminsdk-67tk0-503a259404.json

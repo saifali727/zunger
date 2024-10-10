@@ -1,0 +1,53 @@
+BEGIN:VCALENDAR
+PRODID:-//Google Inc//Google Calendar 70.9054//EN
+VERSION:2.0
+CALSCALE:GREGORIAN
+METHOD:REQUEST
+BEGIN:VTIMEZONE
+TZID:Europe/Kiev
+X-LIC-LOCATION:Europe/Kiev
+BEGIN:DAYLIGHT
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0300
+TZNAME:EEST
+DTSTART:19700329T000000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:+0300
+TZOFFSETTO:+0200
+TZNAME:EET
+DTSTART:19701025T000000
+RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+DTSTART;TZID=Europe/Kiev:20230214T090000
+DTEND;TZID=Europe/Kiev:20230214T100000
+DTSTAMP:20230207T123041Z
+ORGANIZER;CN=dmytro.kruk@forwardkitchens.com:mailto:dmytro.kruk@forwardkitc
+ hens.com
+UID:kn55vs7noa6gf82ilrboqe8s14@google.com
+ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=ACCEPTED;RSVP=TRUE
+ ;CN=dmytro.kruk@forwardkitchens.com;X-NUM-GUESTS=0:mailto:dmytro.kruk@forwa
+ rdkitchens.com
+ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=ACCEPTED;RSVP=TRUE
+ ;CN=saifalich7@gmail.com;X-NUM-GUESTS=0:mailto:saifalich7@gmail.com
+X-MICROSOFT-CDO-OWNERAPPTID:1806026676
+CREATED:20230207T123039Z
+DESCRIPTION:Event Name: Crossover Interview\n\nThe calendar only allows sch
+ eduling 6 days in advance. If you are unable to find an open time slot for 
+ the interview\, please try again later or contact us via chat.\n\nPlease sh
+ are anything that will help prepare for our meeting.: +92 348 4225257\n\nNe
+ ed to make changes to this event?\nCancel: https://calendly.com/cancellatio
+ ns/76b92ffe-2a27-410d-bb97-46ada55d578e\nReschedule: https://calendly.com/r
+ eschedulings/76b92ffe-2a27-410d-bb97-46ada55d578e\n\nPowered by Calendly.co
+ m\n
+LAST-MODIFIED:20230207T123039Z
+LOCATION:
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Saif Ali and Dmytro Kruk
+TRANSP:OPAQUE
+END:VEVENT
+END:VCALENDAR

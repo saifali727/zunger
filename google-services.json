@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "119569723835",
+    "project_id": "zunger-57798",
+    "storage_bucket": "zunger-57798.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:119569723835:android:123bc42e825b159460949e",
+        "android_client_info": {
+          "package_name": "com.zunger.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "119569723835-845jpoa2gt6elmfo4of6bt0fi3014e5a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zunger.app",
+            "certificate_hash": "14edb9026f81522b391bf9513e696aa44998ecb5"
+          }
+        },
+        {
+          "client_id": "119569723835-85pms1pppri3gkrc29267qsff8cu7327.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zunger.app",
+            "certificate_hash": "9ddc363fa6d4480bcd8cb995123aa41973063df1"
+          }
+        },
+        {
+          "client_id": "119569723835-md83piem1co36p9jm2aeekjuq6d8kqvm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAFmMqgyueO_wqm7BffRybeY5GQdh3riU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "119569723835-58c7jsdvce68iu7t3cae0s1maf3vuljl.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "119569723835-fmjvte3cmhsbgjp0pca5841l326ahigl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.zunger.app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
