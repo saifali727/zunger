@@ -428,7 +428,7 @@ class UserController extends Controller
             $image = $request->file('profile_image');
             $file_path = Storage::disk('s3')->put('public/user_image', $image);
             // $file_path = str_replace("public", "storage", $file_path);
-            $file_path='https://duai0zal0fg0e.cloudfront.net/'.$file_path;
+            $file_path='https://d1s3gnygbw6wyo.cloudfront.net'.$file_path;
             $user->profile_image = $file_path;
         }
         if ($request->hasFile('profile_video')) {
@@ -461,7 +461,7 @@ class UserController extends Controller
                 $outputPath
             );
 
-           $user->profile_image = 'https://duai0zal0fg0e.cloudfront.net/'.$outputPath;
+           $user->profile_image = 'https://d1s3gnygbw6wyo.cloudfront.net'.$outputPath;
         //    unlink(str_replace("public", "storage", $videoPath));
         }
         $user->save();

@@ -59,7 +59,7 @@ class PostController extends Controller
                 }
                 else{
                     // $url = Storage::disk($disk)->url($url);
-                    $video_file = 'https://duai0zal0fg0e.cloudfront.net/'.$url;
+                    $video_file = 'https://d1s3gnygbw6wyo.cloudfront.net'.$url;
                     // $video_file = str_replace("https://zunger321.s3.amazonaws.com", "https://duai0zal0fg0e.cloudfront.net", $video_file);
                 }
 
@@ -72,7 +72,7 @@ class PostController extends Controller
                 $filename = rand(1111, 9999) . "" . time() . "." . $extension;
                 $url =  Storage::disk('s3')->put("public/uploads/thumbnails", $file);
                 // $url = Storage::disk($disk)->url($url);
-                $post->update(['thumbnail' => 'https://duai0zal0fg0e.cloudfront.net/'.$url]);
+                $post->update(['thumbnail' => 'https://d1s3gnygbw6wyo.cloudfront.net'.$url]);
             }
             if($request->audio_link){
                 if(isset($request->link_type)){
@@ -122,7 +122,7 @@ class PostController extends Controller
                     ->save();
 
                     // return $outputPath; // Return the path to the output video
-                    $post->update(['url'=>'https://duai0zal0fg0e.cloudfront.net/'.$outputPath]);
+                    $post->update(['url'=>'https://d1s3gnygbw6wyo.cloudfront.net'.$outputPath]);
                 }
                 catch(\Exception $e){
                     return $e->getMessage();
@@ -467,7 +467,7 @@ class PostController extends Controller
             $extension = $file->getClientOriginalExtension();
             $url2 =  Storage::disk('s3')->put("public/uploads", $file);
             // $url2 = Storage::disk('s3')->url($url2);
-            $url2 = 'https://duai0zal0fg0e.cloudfront.net/'.$url2;
+            $url2 = 'https://d1s3gnygbw6wyo.cloudfront.net'.$url2;
         }
         if ($request->hasfile('thumbnail')) {
             $file = $request->file('thumbnail');
@@ -475,7 +475,7 @@ class PostController extends Controller
             $filename = rand(1111, 9999) . "" . time() . "." . $extension;
             $url3 =  Storage::disk('s3')->put("public/uploads/thumbnails", $file);
             // $url3 = Storage::disk('s3')->url($url3);
-            $url3 = 'https://duai0zal0fg0e.cloudfront.net/'.$url3;
+            $url3 = 'https://d1s3gnygbw6wyo.cloudfront.net'.$url3;
         }
 
             // First FFMpeg operation
