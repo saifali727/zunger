@@ -443,7 +443,7 @@ class UserController extends Controller
             $videoPath = $file_path;
 
             // $videoPath = 'path/to/video.mp4';
-            $outputPath = 'public/user_gifs/'.uniqid().'.gif';
+            $outputPath = '/public/user_gifs/'.uniqid().'.gif';
 
 
             FFMpeg::fromDisk('local')
