@@ -59,7 +59,7 @@ class PostController extends Controller
                 }
                 else{
                     // $url = Storage::disk($disk)->url($url);
-                    $video_file = 'https://d1s3gnygbw6wyo.cloudfront.net'.$url;
+                    $video_file = 'https://d1s3gnygbw6wyo.cloudfront.net/'.$url;
                     // $video_file = str_replace("https://zunger321.s3.amazonaws.com", "https://duai0zal0fg0e.cloudfront.net", $video_file);
                 }
 
