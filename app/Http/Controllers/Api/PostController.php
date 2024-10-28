@@ -72,7 +72,7 @@ class PostController extends Controller
                 $filename = rand(1111, 9999) . "" . time() . "." . $extension;
                 $url =  Storage::disk('s3')->put("public/uploads/thumbnails", $file);
                 // $url = Storage::disk($disk)->url($url);
-                $post->update(['thumbnail' => 'https://d1s3gnygbw6wyo.cloudfront.net'.$url]);
+                $post->update(['thumbnail' => 'https://d1s3gnygbw6wyo.cloudfront.net/'.$url]);
             }
             if($request->audio_link){
                 if(isset($request->link_type)){
