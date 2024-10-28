@@ -122,7 +122,7 @@ class PostController extends Controller
                     ->save();
 
                     // return $outputPath; // Return the path to the output video
-                    $post->update(['url'=>'https://d1s3gnygbw6wyo.cloudfront.net'.$outputPath]);
+                    $post->update(['url'=>'https://d1s3gnygbw6wyo.cloudfront.net/'.$outputPath]);
                 }
                 catch(\Exception $e){
                     return $e->getMessage();
