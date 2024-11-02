@@ -31,142 +31,252 @@ class PostController extends Controller
     {
         $this->fCMService = $fCMService;
     }
-    public function upload_video(Request $request)
-    {
-        // return $request->all();
-        App::setLocale($request->locale);
+    // public function upload_video(Request $request)
+    // {
+    //     // return $request->all();
+    //     App::setLocale($request->locale);
 
-        $mention_array = [];
-        $hashtags_array = [];
-        $hashtag_index = 0;
-        $mention_index = 0;
-        $description = "";
-        $request['user_id'] = auth()->user()->id;
-        $request['type'] = "post";
-        $audio_url = "";
-        $video_file = "";
-        $disk = $request->audio_link? "public": "s3";
-        try {
-            $post = Post::create($request->except('file', 'thumbnail', 'description', 'people_tags','audio_link','file_type','link_type'));
-            if ($request->hasfile('file')) {
-                $file = $request->file('file');
-                $extension = $file->getClientOriginalExtension();
-                // $filename = rand(1111, 9999) . "" . time() . "." . $extension;
-                $url =  Storage::disk($disk)->put("zunger/users/videos", $file);
-                if($disk == "public"){
-                //    $url = $url;
-                   $video_file = $url;
-                }
-                else{
-                    // $url = Storage::disk($disk)->url($url);
-                    $video_file = 'https://d1s3gnygbw6wyo.cloudfront.net/'.$url;
-                    // $video_file = str_replace("https://zunger321.s3.amazonaws.com", "https://duai0zal0fg0e.cloudfront.net", $video_file);
-                }
+    //     $mention_array = [];
+    //     $hashtags_array = [];
+    //     $hashtag_index = 0;
+    //     $mention_index = 0;
+    //     $description = "";
+    //     $request['user_id'] = auth()->user()->id;
+    //     $request['type'] = "post";
+    //     $audio_url = "";
+    //     $video_file = "";
+    //     $disk = $request->audio_link? "public": "s3";
+    //     try {
+    //         $post = Post::create($request->except('file', 'thumbnail', 'description', 'people_tags','audio_link','file_type','link_type'));
+    //         if ($request->hasfile('file')) {
+    //             $file = $request->file('file');
+    //             $extension = $file->getClientOriginalExtension();
+    //             // $filename = rand(1111, 9999) . "" . time() . "." . $extension;
+    //             $url =  Storage::disk($disk)->put("zunger/users/videos", $file);
+    //             if($disk == "public"){
+    //             //    $url = $url;
+    //                $video_file = $url;
+    //             }
+    //             else{
+    //                 // $url = Storage::disk($disk)->url($url);
+    //                 $video_file = 'https://d1s3gnygbw6wyo.cloudfront.net/'.$url;
+    //                 // $video_file = str_replace("https://zunger321.s3.amazonaws.com", "https://duai0zal0fg0e.cloudfront.net", $video_file);
+    //             }
 
-                $post->update(['url' => $video_file]);
-                // sleep(10);
-            }
-            if ($request->hasfile('thumbnail')) {
-                $file = $request->file('thumbnail');
-                $extension = $file->getClientOriginalExtension();
-                $filename = rand(1111, 9999) . "" . time() . "." . $extension;
-                $url =  Storage::disk('s3')->put("public/uploads/thumbnails", $file);
-                // $url = Storage::disk($disk)->url($url);
-                $post->update(['thumbnail' => 'https://d1s3gnygbw6wyo.cloudfront.net/'.$url]);
-            }
-            if($request->audio_link){
-                if(isset($request->link_type)){
-                    $externalAudioUrl = $request->audio_link;// Replace with the actual external audio URL
-                    $client = new Client();
-                    $response = $client->get($externalAudioUrl);
-                    $audioData = $response->getBody()->getContents();
-                    $tempAudioFile = 'temp_' . uniqid() . '.mp3';
-                    $path = "public/uploads/audios/";
-                    $success = Storage::disk($disk)->put($path.$tempAudioFile, $audioData);
-                    if ($success) {
-                        // Get the URL of the stored file
-                        $audio_url = $path.$tempAudioFile;
-                        // return $audio_url;
-                        // Do whatever you need to do with $audio_url
-                        // For example, return it in a response
-                    } else {
-                        // Handle the case where storing the file failed
-                        // For example, return an error response
-                        return response()->json(['error' => 'Failed to store the audio file'], 500);
-                    }
-                }
-                if(isset($request->file_type)){
-                        $tempAudioFile = 'temp_' . uniqid() . '.mp3';
-                        $path = "public/uploads/audios";
+    //             $post->update(['url' => $video_file]);
+    //             // sleep(10);
+    //         }
+    //         if ($request->hasfile('thumbnail')) {
+    //             $file = $request->file('thumbnail');
+    //             $extension = $file->getClientOriginalExtension();
+    //             $filename = rand(1111, 9999) . "" . time() . "." . $extension;
+    //             $url =  Storage::disk('s3')->put("public/uploads/thumbnails", $file);
+    //             // $url = Storage::disk($disk)->url($url);
+    //             $post->update(['thumbnail' => 'https://d1s3gnygbw6wyo.cloudfront.net/'.$url]);
+    //         }
+    //         if($request->audio_link){
+    //             if(isset($request->link_type)){
+    //                 $externalAudioUrl = $request->audio_link;// Replace with the actual external audio URL
+    //                 $client = new Client();
+    //                 $response = $client->get($externalAudioUrl);
+    //                 $audioData = $response->getBody()->getContents();
+    //                 $tempAudioFile = 'temp_' . uniqid() . '.mp3';
+    //                 $path = "public/uploads/audios/";
+    //                 $success = Storage::disk($disk)->put($path.$tempAudioFile, $audioData);
+    //                 if ($success) {
+    //                     // Get the URL of the stored file
+    //                     $audio_url = $path.$tempAudioFile;
+    //                     // return $audio_url;
+    //                     // Do whatever you need to do with $audio_url
+    //                     // For example, return it in a response
+    //                 } else {
+    //                     // Handle the case where storing the file failed
+    //                     // For example, return an error response
+    //                     return response()->json(['error' => 'Failed to store the audio file'], 500);
+    //                 }
+    //             }
+    //             if(isset($request->file_type)){
+    //                     $tempAudioFile = 'temp_' . uniqid() . '.mp3';
+    //                     $path = "public/uploads/audios";
 
-                        // Assuming $request->file('audio_link') returns the uploaded file
-                        $uploadedFile = $request->file('audio_link');
+    //                     // Assuming $request->file('audio_link') returns the uploaded file
+    //                     $uploadedFile = $request->file('audio_link');
 
-                        // Store the uploaded file using Laravel's Storage facade
-                        $storedFilePath = $uploadedFile->storeAs($path, $tempAudioFile, 'public');
+    //                     // Store the uploaded file using Laravel's Storage facade
+    //                     $storedFilePath = $uploadedFile->storeAs($path, $tempAudioFile, 'public');
 
-                        if($storedFilePath) {
-                            // $audio_url = $path . $tempAudioFile;
-                            $audio_url = $storedFilePath;
-                            // Now you can save $audio_url to your database or use it as needed
-                        }
-                }
+    //                     if($storedFilePath) {
+    //                         // $audio_url = $path . $tempAudioFile;
+    //                         $audio_url = $storedFilePath;
+    //                         // Now you can save $audio_url to your database or use it as needed
+    //                     }
+    //             }
 
-                $outputPath = 'zunger/users/videos'.uniqid().'.mp4';
-                    // return $audio_url;
-                try {
-                    FFMpeg::fromDisk('public')
-                    ->open([$video_file, $audio_url])
-                    ->export()
-                    ->addFormatOutputMapping(new X264, Media::make('s3', $outputPath), ['0:v', '1:a'])
-                    ->save();
+    //             $outputPath = 'zunger/users/videos'.uniqid().'.mp4';
+    //                 // return $audio_url;
+    //             try {
+    //                 FFMpeg::fromDisk('public')
+    //                 ->open([$video_file, $audio_url])
+    //                 ->export()
+    //                 ->addFormatOutputMapping(new X264, Media::make('s3', $outputPath), ['0:v', '1:a'])
+    //                 ->save();
 
-                    // return $outputPath; // Return the path to the output video
-                    $post->update(['url'=>'https://d1s3gnygbw6wyo.cloudfront.net/'.$outputPath]);
-                }
-                catch(\Exception $e){
-                    return $e->getMessage();
-                }
+    //                 // return $outputPath; // Return the path to the output video
+    //                 $post->update(['url'=>'https://d1s3gnygbw6wyo.cloudfront.net/'.$outputPath]);
+    //             }
+    //             catch(\Exception $e){
+    //                 return $e->getMessage();
+    //             }
 
-            }
-            $description_array = explode(" ", $request->description);
-            foreach ($description_array as $word) {
-                if ($word[0] == "#") {
-                    $hashtags_array[$hashtag_index] = $word;
-                    $hashtag_index += 1;
-                } elseif ($word[0] == "@") {
-                    $mention_array[$mention_index] = str_replace("@", "", $word);
-                    $mention_index += 1;
-                } else {
-                    $description = $description . " " . $word;
-                }
-            }
+    //         }
+    //         $description_array = explode(" ", $request->description);
+    //         foreach ($description_array as $word) {
+    //             if ($word[0] == "#") {
+    //                 $hashtags_array[$hashtag_index] = $word;
+    //                 $hashtag_index += 1;
+    //             } elseif ($word[0] == "@") {
+    //                 $mention_array[$mention_index] = str_replace("@", "", $word);
+    //                 $mention_index += 1;
+    //             } else {
+    //                 $description = $description . " " . $word;
+    //             }
+    //         }
 
-            foreach ($hashtags_array as $hash) {
-                $hash_tag = HashTag::where('title', $hash)->first();
-                if (!$hash_tag) {
-                    $hash_tag = HashTag::create([
-                        'title' => $hash,
-                    ]);
-                }
-                $hash_tag->posts()->attach($post->id);
-            }
+    //         foreach ($hashtags_array as $hash) {
+    //             $hash_tag = HashTag::where('title', $hash)->first();
+    //             if (!$hash_tag) {
+    //                 $hash_tag = HashTag::create([
+    //                     'title' => $hash,
+    //                 ]);
+    //             }
+    //             $hash_tag->posts()->attach($post->id);
+    //         }
 
-            $user_ids = User::whereIn('user_name', $mention_array)->get()->pluck('id')->toArray();
-            $post->tags()->attach(json_decode($request->people_tags));
-            $post->mention_posts()->attach($user_ids);
-            $post =  $post->update(['description' => $description]);
-            if ($post) {
-                return response()->json([
-                    'status' => "200",
-                    'message' => __('auth.video posted successfully'),
-                    'data' => $post,
-                ]);
-            }
-        } catch (\Exception $e) {
-            return $e->getMessage();
+    //         $user_ids = User::whereIn('user_name', $mention_array)->get()->pluck('id')->toArray();
+    //         $post->tags()->attach(json_decode($request->people_tags));
+    //         $post->mention_posts()->attach($user_ids);
+    //         $post =  $post->update(['description' => $description]);
+    //         if ($post) {
+    //             return response()->json([
+    //                 'status' => "200",
+    //                 'message' => __('auth.video posted successfully'),
+    //                 'data' => $post,
+    //             ]);
+    //         }
+    //     } catch (\Exception $e) {
+    //         return $e->getMessage();
+    //     }
+    // }
+
+    use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Queue;
+use FFMpeg\Format\Video\X264;
+use App\Jobs\ProcessVideoUpload;
+use App\Models\Post;
+use App\Models\HashTag;
+use App\Models\User;
+use GuzzleHttp\Client;
+
+public function upload_video(Request $request)
+{
+    App::setLocale($request->locale);
+
+    $request['user_id'] = auth()->user()->id;
+    $request['type'] = "post";
+    $mention_array = [];
+    $hashtags_array = [];
+    $disk = $request->audio_link ? "public" : "s3";
+    $video_file = "";
+    $audio_url = "";
+
+    try {
+        // Create post without media fields
+        $post = Post::create($request->except('file', 'thumbnail', 'description', 'people_tags', 'audio_link', 'file_type', 'link_type'));
+
+        // Upload video and thumbnail asynchronously
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $video_file = $file->store("zunger/users/videos", $disk);
+            $post->url = $disk == "s3" ? 'https://d1s3gnygbw6wyo.cloudfront.net/' . $video_file : $video_file;
+        }
+
+        if ($request->hasFile('thumbnail')) {
+            $thumbnail = $request->file('thumbnail');
+            $thumbnail_url = $thumbnail->store("public/uploads/thumbnails", 's3');
+            $post->thumbnail = 'https://d1s3gnygbw6wyo.cloudfront.net/' . $thumbnail_url;
+        }
+
+        // Handle audio file upload
+        if ($request->audio_link) {
+            $audio_url = $this->handleAudioUpload($request, $disk);
+        }
+
+        // Queue FFMpeg processing if both video and audio are available
+        if ($video_file && $audio_url) {
+            Queue::push(new ProcessVideoUpload($post, $video_file, $audio_url, $disk));
+        }
+
+        // Extract and handle hashtags and mentions
+        $this->processDescription($request->description, $post);
+
+        // Batch update post data
+        $post->update([
+            'description' => $request->description,
+            'url' => $post->url ?? null,
+            'thumbnail' => $post->thumbnail ?? null,
+        ]);
+
+        return response()->json([
+            'status' => "200",
+            'message' => __('auth.video posted successfully'),
+            'data' => $post,
+        ]);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+}
+
+private function handleAudioUpload(Request $request, $disk)
+{
+    $audio_url = "";
+    if ($request->link_type) {
+        $client = new Client();
+        $audioData = $client->get($request->audio_link)->getBody()->getContents();
+        $audio_url = 'public/uploads/audios/temp_' . uniqid() . '.mp3';
+        Storage::disk($disk)->put($audio_url, $audioData);
+    } elseif ($request->file_type) {
+        $uploadedFile = $request->file('audio_link');
+        $audio_url = $uploadedFile->storeAs('public/uploads/audios', 'temp_' . uniqid() . '.mp3', 'public');
+    }
+    return $audio_url;
+}
+
+private function processDescription($description, $post)
+{
+    $mention_array = [];
+    $hashtags_array = [];
+    $description_words = explode(" ", $description);
+
+    foreach ($description_words as $word) {
+        if ($word[0] == "#") {
+            $hashtags_array[] = $word;
+        } elseif ($word[0] == "@") {
+            $mention_array[] = str_replace("@", "", $word);
         }
     }
+
+    // Attach hashtags
+    foreach ($hashtags_array as $hash) {
+        $hash_tag = HashTag::firstOrCreate(['title' => $hash]);
+        $hash_tag->posts()->attach($post->id);
+    }
+
+    // Attach mentions
+    $user_ids = User::whereIn('user_name', $mention_array)->pluck('id')->toArray();
+    $post->mention_posts()->attach($user_ids);
+}
+
     public function upload_story(Request $request)
     {
         App::setLocale($request->locale);
