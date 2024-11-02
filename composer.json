@@ -17,6 +17,7 @@
         "laravel/tinker": "^2.5",
         "league/flysystem-aws-s3-v3": "^1.0",
         "pbmedia/laravel-ffmpeg": "*",
+        "predis/predis": "^2.2",
         "realrashid/sweet-alert": "^7.0",
         "santigarcor/laratrust": "^7.2",
         "twilio/sdk": "^6.44",
