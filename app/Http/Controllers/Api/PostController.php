@@ -26,7 +26,6 @@ use FFMpeg\Exception\InvalidArgumentException;
 use App\Services\FCMService;
 use Illuminate\Support\Facades\Queue;
 use App\Jobs\ProcessVideoUpload;
-use Illuminate\Support\Facades\Redis;
 
 class PostController extends Controller
 {
@@ -173,75 +172,64 @@ class PostController extends Controller
     // }
 
 
-    public function upload_video(Request $request)
-    {
-        App::setLocale($request->locale);
+public function upload_video(Request $request)
+{
+    App::setLocale($request->locale);
 
-        $request['user_id'] = auth()->user()->id;
-        $request['type'] = "post";
-        $mention_array = [];
-        $hashtags_array = [];
-        $disk = $request->audio_link ? "public" : "s3";
-        $video_file = "";
-        $audio_url = "";
+    $request['user_id'] = auth()->user()->id;
+    $request['type'] = "post";
+    $mention_array = [];
+    $hashtags_array = [];
+    $disk = $request->audio_link ? "public" : "s3";
+    $video_file = "";
+    $audio_url = "";
 
-        try {
-            // Create post without media fields
-            $post = Post::create($request->except('file', 'thumbnail', 'description', 'people_tags', 'audio_link', 'file_type', 'link_type'));
+    try {
+        // Create post without media fields
+        $post = Post::create($request->except('file', 'thumbnail', 'description', 'people_tags', 'audio_link', 'file_type', 'link_type'));
 
-            // Store initial processing status in Redis
-            Redis::set('video_status:' . $post->id, 'processing');
-
-            // Upload video and thumbnail asynchronously
-            if ($request->hasFile('file')) {
-                $file = $request->file('file');
-                $video_file = $file->store("zunger/users/videos", $disk);
-                $post->url = $disk == "s3" ? 'https://d1s3gnygbw6wyo.cloudfront.net/' . $video_file : $video_file;
-            }
-
-            if ($request->hasFile('thumbnail')) {
-                $thumbnail = $request->file('thumbnail');
-                $thumbnail_url = $thumbnail->store("public/uploads/thumbnails", 's3');
-                $post->thumbnail = 'https://d1s3gnygbw6wyo.cloudfront.net/' . $thumbnail_url;
-            }
-
-            // Handle audio file upload
-            if ($request->audio_link) {
-                $audio_url = $this->handleAudioUpload($request, $disk);
-            }
-
-            // Queue FFMpeg processing if both video and audio are available
-            if ($video_file && $audio_url) {
-                Queue::push(new ProcessVideoUpload($post, $video_file, $audio_url, $disk));
-            }
-
-            // Extract and handle hashtags and mentions
-            $this->processDescription($request->description, $post);
-
-            // Batch update post data
-            $post->update([
-                'description' => $request->description,
-                'url' => $post->url ?? null,
-                'thumbnail' => $post->thumbnail ?? null,
-            ]);
-
-            // Store metadata in Redis
-            Redis::hmset('video_metadata:' . $post->id, [
-                'description' => $request->description,
-                'url' => $post->url,
-                'thumbnail' => $post->thumbnail
-            ]);
-            Redis::expire('video_metadata:' . $post->id, 3600); // Set TTL to 1 hour
-
-            return response()->json([
-                'status' => "200",
-                'message' => __('auth.video posted successfully'),
-                'data' => $post,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+        // Upload video and thumbnail asynchronously
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $video_file = $file->store("zunger/users/videos", $disk);
+            $post->url = $disk == "s3" ? 'https://d1s3gnygbw6wyo.cloudfront.net/' . $video_file : $video_file;
         }
+
+        if ($request->hasFile('thumbnail')) {
+            $thumbnail = $request->file('thumbnail');
+            $thumbnail_url = $thumbnail->store("public/uploads/thumbnails", 's3');
+            $post->thumbnail = 'https://d1s3gnygbw6wyo.cloudfront.net/' . $thumbnail_url;
+        }
+
+        // Handle audio file upload
+        if ($request->audio_link) {
+            $audio_url = $this->handleAudioUpload($request, $disk);
+        }
+
+        // Queue FFMpeg processing if both video and audio are available
+        if ($video_file && $audio_url) {
+            Queue::push(new ProcessVideoUpload($post, $video_file, $audio_url, $disk));
+        }
+
+        // Extract and handle hashtags and mentions
+        $this->processDescription($request->description, $post);
+
+        // Batch update post data
+        $post->update([
+            'description' => $request->description,
+            'url' => $post->url ?? null,
+            'thumbnail' => $post->thumbnail ?? null,
+        ]);
+
+        return response()->json([
+            'status' => "200",
+            'message' => __('auth.video posted successfully'),
+            'data' => $post,
+        ]);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
     }
+}
 
 private function handleAudioUpload(Request $request, $disk)
 {

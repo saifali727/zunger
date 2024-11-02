@@ -12,7 +12,6 @@ use FFMpeg;
 use FFMpeg\Format\Video\X264;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Post;
-use Illuminate\Support\Facades\Redis;
 class ProcessVideoUpload implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -42,9 +41,6 @@ class ProcessVideoUpload implements ShouldQueue
     public function handle()
     {
         try {
-            // Update Redis status to merging
-            Redis::set('video_status:' . $this->post->id, 'merging');
-
             $outputPath = 'zunger/users/videos/' . uniqid() . '.mp4';
 
             // Process video with FFMpeg by merging video and audio files
@@ -58,23 +54,9 @@ class ProcessVideoUpload implements ShouldQueue
             $this->post->update([
                 'url' => 'https://d1s3gnygbw6wyo.cloudfront.net/' . $outputPath,
             ]);
-
-            // Update Redis status to completed
-            Redis::set('video_status:' . $this->post->id, 'completed');
-
-            // Update video metadata in Redis
-            Redis::hmset('video_metadata:' . $this->post->id, [
-                'url' => $this->post->url,
-                'thumbnail' => $this->post->thumbnail,
-            ]);
-            Redis::expire('video_metadata:' . $this->post->id, 3600); // Expire metadata after 1 hour
-
         } catch (\Exception $e) {
             // Log error or handle failure (could be retried)
             \Log::error("FFMpeg processing failed: " . $e->getMessage());
-
-            // Update Redis status to failed
-            Redis::set('video_status:' . $this->post->id, 'failed');
         }
     }
 
