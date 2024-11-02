@@ -25,7 +25,7 @@ class ProcessVideoUpload implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(Post $post, $videoFile, $audioFile, $disk = 's3')
+    public function __construct(Post $post, $videoFile, $audioFile = null, $disk = 's3')
     {
         $this->post = $post;
         $this->videoFile = $videoFile;
@@ -43,12 +43,19 @@ class ProcessVideoUpload implements ShouldQueue
         try {
             $outputPath = 'zunger/users/videos/' . uniqid() . '.mp4';
 
-            // Process video with FFMpeg by merging video and audio files
-            FFMpeg::fromDisk($this->disk)
-                ->open([$this->videoFile, $this->audioFile])
-                ->export()
-                ->addFormatOutputMapping(new X264, Storage::disk($this->disk)->path($outputPath), ['0:v', '1:a'])
-                ->save();
+            // Initialize FFMpeg for video processing
+            $ffmpeg = FFMpeg::fromDisk($this->disk)->open($this->videoFile);
+
+            if ($this->audioFile) {
+                // Merge video and audio if audio file is provided
+                $ffmpeg->addFormatOutputMapping(new X264, Storage::disk($this->disk)->path($outputPath), ['0:v', '1:a'])
+                       ->open([$this->videoFile, $this->audioFile]);
+            } else {
+                // Only process video if audio file is not provided
+                $ffmpeg->addFormatOutputMapping(new X264, Storage::disk($this->disk)->path($outputPath));
+            }
+
+            $ffmpeg->save();
 
             // Update the post with the new video URL
             $this->post->update([
@@ -59,5 +66,6 @@ class ProcessVideoUpload implements ShouldQueue
             \Log::error("FFMpeg processing failed: " . $e->getMessage());
         }
     }
+
 
 }
