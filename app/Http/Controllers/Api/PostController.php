@@ -24,6 +24,9 @@ use ProtoneMedia\LaravelFFMpeg\Filesystem\Media;
 use FFMpeg\Filters\Video\VideoFilters;
 use FFMpeg\Exception\InvalidArgumentException;
 use App\Services\FCMService;
+use Illuminate\Support\Facades\Queue;
+use App\Jobs\ProcessVideoUpload;
+
 class PostController extends Controller
 {
     private $fCMService;
@@ -168,15 +171,6 @@ class PostController extends Controller
     //     }
     // }
 
-    use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Queue;
-use FFMpeg\Format\Video\X264;
-use App\Jobs\ProcessVideoUpload;
-use App\Models\Post;
-use App\Models\HashTag;
-use App\Models\User;
-use GuzzleHttp\Client;
 
 public function upload_video(Request $request)
 {
