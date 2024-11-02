@@ -208,7 +208,8 @@ public function upload_video(Request $request)
 
         // Queue FFMpeg processing if both video and audio are available
         if ($video_file && $audio_url) {
-            Queue::push(new ProcessVideoUpload($post, $video_file, $audio_url, $disk));
+            ProcessVideoUpload::dispatch($post, $video_file, $audio_url, $disk);
+
         }
 
         // Extract and handle hashtags and mentions
