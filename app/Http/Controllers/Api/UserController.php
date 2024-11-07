@@ -16,6 +16,7 @@ use FFMpeg\Format\Video\Gif;
 use Intervention\Image\Facades\Image;
 use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 use App\Services\FCMService;
+use App\Jobs\ProcessProfileVideo;
 class UserController extends Controller
 {
     private $fCMService;
@@ -401,59 +402,117 @@ class UserController extends Controller
         }
     }
 
+    // public function edit_profile(Request $request)
+    // {
+    //     $request->validate([
+    //         'profile_video' => 'required|file|max:20240', // 10240 KB = 10 MB
+    //     ], [
+    //         'profile_video.max' => 'The video size must be less than 10MB.',
+    //     ]);
+
+    //     App::setLocale($request->locale);
+    //     $user = User::where('id', auth()->user()->id)->first();
+
+    //     if ($request->nick_name && $request->nick_name != null) {
+    //         $user->nick_name = $request->nick_name;
+    //     }
+    //     // if($request->email && $request->email != null){
+    //     //     $user->email = $request->email;
+    //     // }
+    //     if ($request->phone_number && $request->phone_number != null) {
+    //         $user->phone_number = $request->phone_number;
+    //     }
+    //     if ($request->bio && $request->bio != null) {
+    //         $user->bio = $request->bio;
+    //     }
+    //     if ($request->hasFile('profile_image')) {
+    //         $image = $request->file('profile_image');
+    //         $file_path = Storage::disk('s3')->put('public/user_image', $image);
+    //         // $file_path = str_replace("public", "storage", $file_path);
+    //         $file_path='https://d1s3gnygbw6wyo.cloudfront.net'.$file_path;
+    //         $user->profile_image = $file_path;
+    //     }
+    //     if ($request->hasFile('profile_video')) {
+    //         // return 1;
+    //         $video = $request->file('profile_video');
+
+    //         $file_path = Storage::put('public/user_video', $video);
+    //         // $file_path = str_replace("public/", "", $file_path);
+    //         $user->profile_image = $file_path;
+
+    //         $user->profile_video = str_replace("public", "storage", $file_path);
+    //         $videoPath = $file_path;
+
+    //         // $videoPath = 'path/to/video.mp4';
+    //         $outputPath = '/public/user_gifs/'.uniqid().'.gif';
+
+
+    //         FFMpeg::fromDisk('local')
+    //         ->open($videoPath)
+    //         ->addFilterAsComplexFilter(
+    //             ['-ss 0', '-t 3'],
+    //             [
+    //                 '-vf "fps=10,scale=360:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse"',
+    //                 '-loop 0',
+    //             ]
+    //         )
+    //         ->export()
+    //         ->toDisk('s3')
+    //         ->save(
+    //             $outputPath
+    //         );
+
+    //        $user->profile_image = 'https://d1s3gnygbw6wyo.cloudfront.net'.$outputPath;
+    //     //    unlink(str_replace("public", "storage", $videoPath));
+    //     }
+    //     $user->save();
+    //     return response()->json([
+    //         'status' => 200,
+    //         'message' => __('auth.profile updated successfully'),
+    //         'user'=>$user,
+    //     ]);
+    // }
+
     public function edit_profile(Request $request)
-    {
-        $request->validate([
-            'profile_video' => 'required|file|max:202400', // 10240 KB = 10 MB
-        ], [
-            'profile_video.max' => 'The video size must be less than 200MB.',
-        ]);
+{
+    $request->validate([
+        'profile_video' => 'sometimes|nullable|file|max:10240', // 10 MB
+    ], [
+        'profile_video.max' => 'The video size must be less than 10MB.',
+    ]);
 
-        App::setLocale($request->locale);
-        $user = User::where('id', auth()->user()->id)->first();
+    App::setLocale($request->locale);
+    $user = auth()->user();
 
-        if ($request->nick_name && $request->nick_name != null) {
-            $user->nick_name = $request->nick_name;
-        }
-        // if($request->email && $request->email != null){
-        //     $user->email = $request->email;
-        // }
-        if ($request->phone_number && $request->phone_number != null) {
-            $user->phone_number = $request->phone_number;
-        }
-        if ($request->bio && $request->bio != null) {
-            $user->bio = $request->bio;
-        }
-        if ($request->hasFile('profile_image')) {
-            $image = $request->file('profile_image');
-            $file_path = Storage::disk('s3')->put('public/user_image', $image);
-            // $file_path = str_replace("public", "storage", $file_path);
-            $file_path='https://d1s3gnygbw6wyo.cloudfront.net'.$file_path;
-            $user->profile_image = $file_path;
-        }
-        if ($request->hasFile('profile_video')) {
-            // return 1;
-            $video = $request->file('profile_video');
+    // Update user fields
+    $user->fill($request->only(['nick_name', 'phone_number', 'bio']));
 
-            $file_path = Storage::put('public/user_video', $video);
-            // $file_path = str_replace("public/", "", $file_path);
-            $user->profile_image = $file_path;
-
-            $user->profile_video = str_replace("public", "storage", $file_path);
-            $videoPath = $file_path;
-
-            // $videoPath = 'path/to/video.mp4';
-            $outputPath = '/public/user_gifs/'.uniqid().'.gif';
-
-        //    unlink(str_replace("public", "storage", $videoPath));
-        }
-        $user->save();
-        return response()->json([
-            'status' => 200,
-            'message' => __('auth.profile updated successfully'),
-            'user'=>$user,
-        ]);
+    // Process and upload profile image if provided
+    if ($request->hasFile('profile_image')) {
+        $image = $request->file('profile_image');
+        $file_path = Storage::disk('s3')->put('public/user_image', $image);
+        $user->profile_image = 'https://d1s3gnygbw6wyo.cloudfront.net' . $file_path;
     }
+
+    // Process and upload profile video if provided
+    if ($request->hasFile('profile_video')) {
+        $video = $request->file('profile_video');
+        $videoPath = Storage::disk('s3')->put('public/user_video', $video);
+        $outputPath = 'public/user_gifs/' . uniqid() . '.gif';
+
+        // Dispatch the job to handle video processing
+        ProcessProfileVideo::dispatch($videoPath, $outputPath, $user);
+    }
+
+    $user->save();
+
+    return response()->json([
+        'status' => 200,
+        'message' => __('auth.profile updated successfully'),
+        'user' => $user,
+    ]);
+}
+
 
     public function convertToGif($videoPath, $outputPath, $startTime, $duration)
     {
