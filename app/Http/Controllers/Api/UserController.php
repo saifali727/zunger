@@ -502,6 +502,7 @@ class UserController extends Controller
 
         // Dispatch the job to handle video processing
         ProcessProfileVideo::dispatch($videoPath, $outputPath, $user);
+        $user->profile_video = 'https://d1s3gnygbw6wyo.cloudfront.net'.$videoPath;
     }
 
     $user->save();
