@@ -405,10 +405,11 @@ class UserController extends Controller
     public function edit_profile(Request $request)
     {
         $request->validate([
-            'profile_video' => 'required|file|max:20240', // 10240 KB = 10 MB
+            'profile_video' => 'required|file|max:204800', // 200 MB
         ], [
-            'profile_video.max' => 'The video size must be less than 10MB.',
+            'profile_video.max' => 'The video size must be less than 200MB.',
         ]);
+
 
         App::setLocale($request->locale);
         $user = User::where('id', auth()->user()->id)->first();
