@@ -37,7 +37,7 @@ class ProcessProfileVideo implements ShouldQueue
     public function handle()
     {
         // Video to GIF conversion using FFMpeg
-        FFMpeg::fromDisk('local')
+        FFMpeg::fromDisk('s3')
             ->open($this->videoPath)
             ->addFilterAsComplexFilter(
                 ['-ss 0', '-t 3'],
@@ -51,9 +51,8 @@ class ProcessProfileVideo implements ShouldQueue
             ->save(
                 $this->outputPath
             );
-        // Update the user's profile image to the GIF URL
-        $this->user->update([
-            'profile_image' => 'https://d1s3gnygbw6wyo.cloudfront.net/' . $this->outputPath,
-        ]);
+
+           $this->user->profile_image = 'https://d1s3gnygbw6wyo.cloudfront.net'.$this->outputPath;
+           $this->user->save();
     }
 }
