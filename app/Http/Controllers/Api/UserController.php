@@ -16,7 +16,6 @@ use FFMpeg\Format\Video\Gif;
 use Intervention\Image\Facades\Image;
 use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 use App\Services\FCMService;
-use App\Jobs\ProcessProfileVideo;
 class UserController extends Controller
 {
     private $fCMService;
@@ -476,6 +475,7 @@ class UserController extends Controller
 
     public function edit_profile(Request $request)
     {
+        // Validate video size and set locale
         $request->validate([
             'profile_video' => 'sometimes|nullable|file|max:10240', // 10 MB
         ], [
@@ -485,7 +485,7 @@ class UserController extends Controller
         App::setLocale($request->locale);
         $user = auth()->user();
 
-        // Update non-empty fields
+        // Update only non-empty fields
         $user->fill($request->only(['nick_name', 'phone_number', 'bio']));
 
         // Process and upload profile image if provided
@@ -499,11 +499,19 @@ class UserController extends Controller
         if ($request->hasFile('profile_video')) {
             $video = $request->file('profile_video');
             $videoPath = Storage::disk('s3')->put('public/user_video', $video);
+
+            // Generate GIF
             $outputPath = 'public/user_gifs/' . uniqid() . '.gif';
 
-            // Dispatch the job to handle video processing
-            ProcessProfileVideo::dispatch($videoPath, $outputPath, $user);
+            FFMpeg::fromDisk('s3')
+                ->open($videoPath)
+                ->addFilter(['-ss 0', '-t 3', '-vf', 'fps=10,scale=360:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse', '-loop 0'])
+                ->export()
+                ->toDisk('s3')
+                ->save($outputPath);
 
+            $user->profile_video = str_replace("public", "storage", $videoPath);
+            $user->profile_image = 'https://d1s3gnygbw6wyo.cloudfront.net' . $outputPath;
         }
 
         $user->save();
@@ -514,7 +522,6 @@ class UserController extends Controller
             'user' => $user,
         ]);
     }
-
 
 
 
