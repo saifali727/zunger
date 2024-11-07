@@ -53,7 +53,7 @@ class ProcessProfileVideo implements ShouldQueue
             );
         // Update the user's profile image to the GIF URL
         $this->user->update([
-            'profile_image' => 'https://d1s3gnygbw6wyo.cloudfront.net' . $this->outputPath,
+            'profile_image' => 'https://d1s3gnygbw6wyo.cloudfront.net/' . $this->outputPath,
         ]);
     }
 }
