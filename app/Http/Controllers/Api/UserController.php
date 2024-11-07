@@ -436,18 +436,20 @@ class UserController extends Controller
             // return 1;
             $video = $request->file('profile_video');
 
-            $file_path = Storage::put('public/user_video', $video);
+            // $file_path = Storage::put('public/user_video', $video);
+            $file_path = Storage::disk('s3')->put('public/user_video', $video);
             // $file_path = str_replace("public/", "", $file_path);
             $user->profile_image = $file_path;
 
-            $user->profile_video = str_replace("public", "storage", $file_path);
+            // $user->profile_video = str_replace("public", "storage", $file_path);
+            $user->profile_video = 'https://d1s3gnygbw6wyo.cloudfront.net/'.$file_path;
             $videoPath = $file_path;
 
             // $videoPath = 'path/to/video.mp4';
             $outputPath = '/public/user_gifs/'.uniqid().'.gif';
 
 
-            FFMpeg::fromDisk('local')
+            FFMpeg::fromDisk('s3')
             ->open($videoPath)
             ->addFilterAsComplexFilter(
                 ['-ss 0', '-t 3'],
