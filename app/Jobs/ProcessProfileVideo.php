@@ -43,7 +43,6 @@ class ProcessProfileVideo implements ShouldQueue
             ->export()
             ->toDisk('s3')
             ->save($this->outputPath);
-
         // Update the user's profile image to the GIF URL
         $this->user->update([
             'profile_image' => 'https://d1s3gnygbw6wyo.cloudfront.net' . $this->outputPath,
