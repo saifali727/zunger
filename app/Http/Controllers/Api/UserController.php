@@ -448,7 +448,7 @@ class UserController extends Controller
             // $videoPath = 'path/to/video.mp4';
             $outputPath = '/public/user_gifs/'.uniqid().'.gif';
 
-
+            ProcessProfileVideo::dispatch($videoPath, $outputPath, $user);
             FFMpeg::fromDisk('s3')
             ->open($videoPath)
             ->addFilterAsComplexFilter(
