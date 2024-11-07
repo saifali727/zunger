@@ -37,7 +37,7 @@ class ProcessProfileVideo implements ShouldQueue
     public function handle()
     {
         // Video to GIF conversion using FFMpeg
-        FFMpeg::fromDisk('s3')
+        FFMpeg::fromDisk('local')
             ->open($this->videoPath)
             ->addFilterAsComplexFilter(
                 ['-ss 0', '-t 3'],

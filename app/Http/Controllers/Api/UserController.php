@@ -497,11 +497,12 @@ class UserController extends Controller
     // Process and upload profile video if provided
     if ($request->hasFile('profile_video')) {
         $video = $request->file('profile_video');
+        $file_path = Storage::put('public/user_video', $video);
         $videoPath = Storage::disk('s3')->put('public/user_video', $video);
         $outputPath = 'public/user_gifs/' . uniqid() . '.gif';
 
         // Dispatch the job to handle video processing
-        ProcessProfileVideo::dispatch($videoPath, $outputPath, $user);
+        ProcessProfileVideo::dispatch($file_path, $outputPath, $user);
         $user->profile_video = 'https://d1s3gnygbw6wyo.cloudfront.net/'.$videoPath;
     }
 
