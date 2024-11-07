@@ -448,23 +448,23 @@ class UserController extends Controller
             // $videoPath = 'path/to/video.mp4';
             $outputPath = '/public/user_gifs/'.uniqid().'.gif';
 
-            ProcessProfileVideo::dispatch($videoPath, $outputPath, $user);
-        //     FFMpeg::fromDisk('s3')
-        //     ->open($videoPath)
-        //     ->addFilterAsComplexFilter(
-        //         ['-ss 0', '-t 3'],
-        //         [
-        //             '-vf "fps=10,scale=360:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse"',
-        //             '-loop 0',
-        //         ]
-        //     )
-        //     ->export()
-        //     ->toDisk('s3')
-        //     ->save(
-        //         $outputPath
-        //     );
+            // ProcessProfileVideo::dispatch($videoPath, $outputPath, $user);
+            FFMpeg::fromDisk('s3')
+            ->open($videoPath)
+            ->addFilterAsComplexFilter(
+                ['-ss 0', '-t 3'],
+                [
+                    '-vf "fps=10,scale=360:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse"',
+                    '-loop 0',
+                ]
+            )
+            ->export()
+            ->toDisk('s3')
+            ->save(
+                $outputPath
+            );
 
-        //    $user->profile_image = 'https://d1s3gnygbw6wyo.cloudfront.net'.$outputPath;
+           $user->profile_image = 'https://d1s3gnygbw6wyo.cloudfront.net'.$outputPath;
         //    unlink(str_replace("public", "storage", $videoPath));
         }
         $user->save();
