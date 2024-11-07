@@ -477,7 +477,7 @@ class UserController extends Controller
 {
     // Validate video size and set locale
     $request->validate([
-        'profile_video' => 'required|file|max:10240', // 10 MB
+        'profile_video' => 'sometimes|file|max:10240', // 10 MB
     ], [
         'profile_video.max' => 'The video size must be less than 10MB.',
     ]);
