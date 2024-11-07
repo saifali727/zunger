@@ -500,7 +500,7 @@ class UserController extends Controller
             $video = $request->file('profile_video');
             $videoPath = Storage::disk('s3')->put('public/user_video', $video);
             $outputPath = 'public/user_gifs/' . uniqid() . '.gif';
-            return $videoPath;
+            $videoPath = 'https://d1s3gnygbw6wyo.cloudfront.net/'.$videoPath;
             // Dispatch the job to handle video processing
             ProcessProfileVideo::dispatch($videoPath, $outputPath, $user);
 
