@@ -405,7 +405,7 @@ class UserController extends Controller
     public function edit_profile(Request $request)
     {
         $request->validate([
-            'profile_video' => 'required|file|max:204800', // 200 MB
+            'profile_video' => 'sometimes|file|max:204800', // 200 MB
         ], [
             'profile_video.max' => 'The video size must be less than 200MB.',
         ]);
