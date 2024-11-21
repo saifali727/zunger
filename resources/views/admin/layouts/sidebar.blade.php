@@ -51,7 +51,7 @@
                     </a>
                 </li>
                 <li class="nav-item theme-text">
-                    <a href="index.html" class="nav-link"> Anawakhti </a>
+                    <a href="index.html" class="nav-link"> Zungers </a>
                 </li>
             </ul>
 

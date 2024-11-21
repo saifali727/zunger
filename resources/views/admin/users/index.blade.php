@@ -209,7 +209,7 @@
 
         <div class="footer-wrapper">
             <div class="footer-section f-section-1">
-                <p class="">Copyright © 2021 <a target="_blank">Anawakhti</a>, All
+                <p class="">Copyright © 2021 <a target="_blank">Zungers</a>, All
                     rights reserved.</p>
             </div>
             <div class="footer-section f-section-2">
