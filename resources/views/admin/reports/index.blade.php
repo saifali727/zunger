@@ -37,6 +37,10 @@
                     name: 'post'
                 },
                 {
+                    data: 'report_type',
+                    name: 'report_type'
+                },
+                {
                     data: 'description',
                     name: 'description'
                 },
@@ -215,6 +219,7 @@
                                     <th>Reporter</th>
                                     <th>Post</th>
                                     <th>Reason</th>
+                                    <th>Description</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
