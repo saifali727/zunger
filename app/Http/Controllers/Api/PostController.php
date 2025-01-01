@@ -543,112 +543,67 @@ private function processDescription($description, $post)
         return $outputPath;
     }
 
-    public function make_duet(Request $request){
-        // ini_set('max_execution_time', 60000);
+    public function make_duet(Request $request)
+    {
         $validated = $request->validate([
-            'post_id'=>'required',
-            'video'=>'required',
+            'post_id' => 'required',
+            'video' => 'required|file',
         ]);
-        $url2="";
-        $url3="";
-        $video1 = "";
+    
         try {
-        if ($request->post_id) {
-            $video1 = Post::find($request->post_id);
-            // if($video1->duet_status == 1){
-            //   $url1 = $video1->url;
-            //   $url1 = str_replace('storage', 'public' , $url1);
-            // //   $url3='public/uploads/'.uniqid().'.mp4';
-            // }
-            // else{
-            //     return response()->json([
-            //         'status'=>401,
-            //         'message'>'duet with the video not allowed',
-            //     ]);
-            // }
-
-        }
-        if ($request->hasfile('video')) {
-            $file = $request->file('video');
-            $extension = $file->getClientOriginalExtension();
-            $url2 =  Storage::disk('s3')->put("public/uploads", $file);
-            // $url2 = Storage::disk('s3')->url($url2);
-            $url2 = 'https://d1s3gnygbw6wyo.cloudfront.net'.$url2;
-        }
-        if ($request->hasfile('thumbnail')) {
-            $file = $request->file('thumbnail');
-            $extension = $file->getClientOriginalExtension();
-            $filename = rand(1111, 9999) . "" . time() . "." . $extension;
-            $url3 =  Storage::disk('s3')->put("public/uploads/thumbnails", $file);
-            // $url3 = Storage::disk('s3')->url($url3);
-            $url3 = 'https://d1s3gnygbw6wyo.cloudfront.net'.$url3;
-        }
-
-            // First FFMpeg operation
-            // FFMpeg::open($url2)
-            // ->export()
-            // ->inFormat(new \FFMpeg\Format\Video\X264)
-            // ->resize(640, 480)
-            // ->save($url4);
-
-        // return $url4;
-            // $outputPath = 'public/uploads/'.uniqid().'.mp4';
-            //     FFMpeg::fromDisk('local')
-            //         ->open([$url1, $url4])
-            //         ->export()
-            //         ->addFilter('[0:v][1:v]', 'hstack', '[v]')
-            //         ->addFormatOutputMapping(new X264, Media::make('local', $outputPath), ['0:a?', '[v]'])
-            //         ->save();
-
-
-                // Check if the second operation was successful
-                    // $outputPath = str_replace('public', 'storage', $outputPath);
-                    $post = Post::create([
-                        'user_id'=>auth()->user()->id,
-                        'url'=>$url2,
-                        'duet_with'=>$video1->url,
-                        'is_duet'=>1,
-                        'type'=>'post',
-                        'is_private'=>0,
-                        'watch_status'=>'Everyone',
-                        'comment_status'=>1,
-                        'duet_status'=>1,
-                        'stitch_status'=>1,
-                        'quality_uploads'=>1,
-                        'thumbnail'=>$url3,
-                    ]);
-
-                    // $deviceToken = User::where('id',$flag->user_id)->first();
-                    // $title =auth()->user()->nick_name." has like your post";
-                    // $body = "click to watch a video";
-                    // // $user_to_sent = User::find($request->user_id);
-                    // $data = [
-                    //     'token'=>$deviceToken->fcm_token,
-                    //     'user'=>auth()->user(),
-                    //     'post'=>$flag
-                    // ];
-                    // $fcmtoken = $deviceToken->fcm_token;
-                    // if($fcmtoken){
-                    //     $this->fCMService->sendNotification($fcmtoken, $title, $body,$data);
-                    // }
-                    // Notification::create([
-                    // 'user_id'=>auth()->user()->id,
-                    // 'user'=>$deviceToken,
-                    // 'channel_name'=>'post like',
-                    // 'token'=>$fcmtoken,
-                    // ]);
-
-                    return response()->json([
-                        'status'=>200,
-                        'post'=>$post
-                    ]);
+            // Fetch the original video for the duet
+            $video1 = Post::findOrFail($request->post_id);
+    
+            if ($video1->duet_status !== 1) {
+                return response()->json([
+                    'status' => 401,
+                    'message' => 'Duet with the video not allowed',
+                ]);
+            }
+    
+            $uploadedVideoUrl = $this->uploadToS3($request->file('video'), 'public/uploads');
+            $thumbnailUrl = $request->hasFile('thumbnail') 
+                ? $this->uploadToS3($request->file('thumbnail'), 'public/uploads/thumbnails') 
+                : null;
+    
+            // Create new duet post
+            $post = Post::create([
+                'user_id' => auth()->id(),
+                'url' => $uploadedVideoUrl,
+                'duet_with' => $video1->url,
+                'is_duet' => 1,
+                'type' => 'post',
+                'is_private' => 0,
+                'watch_status' => 'Everyone',
+                'comment_status' => 1,
+                'duet_status' => 1,
+                'stitch_status' => 1,
+                'quality_uploads' => 1,
+                'thumbnail' => $thumbnailUrl,
+            ]);
+    
+            return response()->json([
+                'status' => 200,
+                'post' => $post,
+            ]);
         } catch (\Exception $e) {
-            // Handle general exceptions
             return response()->json(['error' => $e->getMessage()], 500);
         }
-
-
     }
+    
+    /**
+     * Helper function to upload a file to S3 and return the CloudFront URL.
+     *
+     * @param \Illuminate\Http\UploadedFile $file
+     * @param string $path
+     * @return string
+     */
+    private function uploadToS3($file, $path)
+    {
+        $filePath = Storage::disk('s3')->put($path, $file);
+        return 'https://d1s3gnygbw6wyo.cloudfront.net/' . $filePath;
+    }
+    
 
 
 }
