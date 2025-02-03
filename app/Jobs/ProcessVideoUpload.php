@@ -59,7 +59,7 @@ class ProcessVideoUpload implements ShouldQueue
 
             // Update the post with the new video URL
             $this->post->update([
-                'url' => 'https://d1s3gnygbw6wyo.cloudfront.net/' . $outputPath,
+                'url' => 'https://d3425wbae1qhx8.cloudfront.net/' . $outputPath,
             ]);
         } catch (\Exception $e) {
             // Log error or handle failure (could be retried)

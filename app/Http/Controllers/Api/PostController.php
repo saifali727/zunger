@@ -62,7 +62,7 @@ class PostController extends Controller
     //             }
     //             else{
     //                 // $url = Storage::disk($disk)->url($url);
-    //                 $video_file = 'https://d1s3gnygbw6wyo.cloudfront.net/'.$url;
+    //                 $video_file = 'https://d3425wbae1qhx8.cloudfront.net/'.$url;
     //                 // $video_file = str_replace("https://zunger321.s3.amazonaws.com", "https://duai0zal0fg0e.cloudfront.net", $video_file);
     //             }
 
@@ -75,7 +75,7 @@ class PostController extends Controller
     //             $filename = rand(1111, 9999) . "" . time() . "." . $extension;
     //             $url =  Storage::disk('s3')->put("public/uploads/thumbnails", $file);
     //             // $url = Storage::disk($disk)->url($url);
-    //             $post->update(['thumbnail' => 'https://d1s3gnygbw6wyo.cloudfront.net/'.$url]);
+    //             $post->update(['thumbnail' => 'https://d3425wbae1qhx8.cloudfront.net/'.$url]);
     //         }
     //         if($request->audio_link){
     //             if(isset($request->link_type)){
@@ -125,7 +125,7 @@ class PostController extends Controller
     //                 ->save();
 
     //                 // return $outputPath; // Return the path to the output video
-    //                 $post->update(['url'=>'https://d1s3gnygbw6wyo.cloudfront.net/'.$outputPath]);
+    //                 $post->update(['url'=>'https://d3425wbae1qhx8.cloudfront.net/'.$outputPath]);
     //             }
     //             catch(\Exception $e){
     //                 return $e->getMessage();
@@ -192,13 +192,13 @@ public function upload_video(Request $request)
         if ($request->hasFile('file')) {
             $file = $request->file('file');
             $video_file = $file->store("zunger/users/videos", $disk);
-            $post->url = $disk == "s3" ? 'https://d1s3gnygbw6wyo.cloudfront.net/' . $video_file : $video_file;
+            $post->url = $disk == "s3" ? 'https://d3425wbae1qhx8.cloudfront.net/' . $video_file : $video_file;
         }
 
         if ($request->hasFile('thumbnail')) {
             $thumbnail = $request->file('thumbnail');
             $thumbnail_url = $thumbnail->store("public/uploads/thumbnails", 's3');
-            $post->thumbnail = 'https://d1s3gnygbw6wyo.cloudfront.net/' . $thumbnail_url;
+            $post->thumbnail = 'https://d3425wbae1qhx8.cloudfront.net/' . $thumbnail_url;
         }
 
         // Handle audio file upload
@@ -601,7 +601,7 @@ private function processDescription($description, $post)
     private function uploadToS3($file, $path)
     {
         $filePath = Storage::disk('s3')->put($path, $file);
-        return 'https://d1s3gnygbw6wyo.cloudfront.net/' . $filePath;
+        return 'https://d3425wbae1qhx8.cloudfront.net/' . $filePath;
     }
     
 

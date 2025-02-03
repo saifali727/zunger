@@ -39,7 +39,7 @@ class CommentController extends Controller
             // $path = public_path() . '/uploads/';
             // $url =  $file->move($path, $filename);
             // $url_update = str_replace('public', 'storage', $url);
-            $request['url']= 'https://d1s3gnygbw6wyo.cloudfront.net/'.$urls3;
+            $request['url']= 'https://d3425wbae1qhx8.cloudfront.net/'.$urls3;
             $outputPath = 'comment_thumbnails/'.uniqid().'.jpg';
             FFMpeg::fromDisk('local')
             ->open($url)
@@ -47,7 +47,7 @@ class CommentController extends Controller
             ->export()
             ->toDisk('s3')
             ->save($outputPath);
-            $request['thumbnail'] = 'https://d1s3gnygbw6wyo.cloudfront.net/'.$outputPath;
+            $request['thumbnail'] = 'https://d3425wbae1qhx8.cloudfront.net/'.$outputPath;
         }
         if(isset($request->comment_id)){
             $request['parent_id'] = $request->comment_id;
@@ -88,7 +88,7 @@ class CommentController extends Controller
                 'status' => 200,
                 'message' => __('auth.comment added on post successfully'),
                 'comment' => $comments,
-                'thumbnail'=>$outputPath ? 'https://d1s3gnygbw6wyo.cloudfront.net/'.$outputPath : '' ,
+                'thumbnail'=>$outputPath ? 'https://d3425wbae1qhx8.cloudfront.net/'.$outputPath : '' ,
             ]);
         }
 
@@ -97,7 +97,7 @@ class CommentController extends Controller
             'status' => 200,
             'message' => __('auth.comment added on post successfully'),
             'comment' => $comments,
-            'thumbnail'=>$outputPath ? 'https://d1s3gnygbw6wyo.cloudfront.net/'.$outputPath : '' ,
+            'thumbnail'=>$outputPath ? 'https://d3425wbae1qhx8.cloudfront.net/'.$outputPath : '' ,
         ]);
     }
 
@@ -205,7 +205,7 @@ class CommentController extends Controller
             $extension = $file->getClientOriginalExtension();
             $filename = rand(1111, 9999) . "" . time() . "." . $extension;
             $url =  Storage::disk('s3')->put("public/comments", $file);
-            $url_update = 'https://d1s3gnygbw6wyo.cloudfront.net/'.$url; // Uncomment this line
+            $url_update = 'https://d3425wbae1qhx8.cloudfront.net/'.$url; // Uncomment this line
             $request['url']= $url_update;
         }
         // if($comment->url && file_exists($comment->url)){

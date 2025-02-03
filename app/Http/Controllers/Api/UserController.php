@@ -349,7 +349,7 @@ class UserController extends Controller
             $image = $request->file('profile_image');
             $file_path = Storage::disk('s3')->put('public/user_image', $image);
             // $file_path = str_replace("public", "storage", $file_path);
-            $file_path = 'https://d1s3gnygbw6wyo.cloudfront.net' . $file_path;
+            $file_path = 'https://d3425wbae1qhx8.cloudfront.net' . $file_path;
             $user->profile_image = $file_path;
         }
         if ($request->hasFile('profile_video')) {
@@ -362,7 +362,7 @@ class UserController extends Controller
             $user->profile_image = $file_path;
 
             // $user->profile_video = str_replace("public", "storage", $file_path);
-            $user->profile_video = 'https://d1s3gnygbw6wyo.cloudfront.net/' . $file_path;
+            $user->profile_video = 'https://d3425wbae1qhx8.cloudfront.net/' . $file_path;
             $videoPath = $file_path;
 
             // $videoPath = 'path/to/video.mp4';
@@ -384,7 +384,7 @@ class UserController extends Controller
                     $outputPath
                 );
 
-            $user->profile_image = 'https://d1s3gnygbw6wyo.cloudfront.net' . $outputPath;
+            $user->profile_image = 'https://d3425wbae1qhx8.cloudfront.net' . $outputPath;
             //    unlink(str_replace("public", "storage", $videoPath));
         }
         $user->save();
@@ -413,7 +413,7 @@ class UserController extends Controller
     //     if ($request->hasFile('profile_image')) {
     //         $image = $request->file('profile_image');
     //         $file_path = Storage::disk('s3')->put('public/user_image', $image);
-    //         $user->profile_image = 'https://d1s3gnygbw6wyo.cloudfront.net' . $file_path;
+    //         $user->profile_image = 'https://d3425wbae1qhx8.cloudfront.net' . $file_path;
     //     }
 
     //     // Process and upload profile video if provided
@@ -425,7 +425,7 @@ class UserController extends Controller
 
     //         // Dispatch the job to handle video processing
     //         ProcessProfileVideo::dispatch($file_path, $outputPath, $user);
-    //         $user->profile_video = 'https://d1s3gnygbw6wyo.cloudfront.net/'.$videoPath;
+    //         $user->profile_video = 'https://d3425wbae1qhx8.cloudfront.net/'.$videoPath;
     //     }
 
     //     $user->save();

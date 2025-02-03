@@ -52,7 +52,7 @@ class ProcessProfileVideo implements ShouldQueue
                 $this->outputPath
             );
 
-           $this->user->profile_image = 'https://d1s3gnygbw6wyo.cloudfront.net'.$this->outputPath;
+           $this->user->profile_image = 'https://d3425wbae1qhx8.cloudfront.net'.$this->outputPath;
            $this->user->save();
     }
 }
